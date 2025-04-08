@@ -23,10 +23,10 @@ class AuthController {
     }
     await User.verifyCredentials(email, password)
 
-    const token = await auth.use('api').createToken(user)
+    const token = await auth.use('jwt').generate(user)
     return response.status(200).json({
       success: true,
-      data: { access_token: token.value?.release() },
+      data: { access_token: token.token },
       message: 'Đăng nhập thành công',
     })
   }
@@ -41,7 +41,6 @@ class AuthController {
    */
   public async logout({ auth, response }: HttpContext) {
     try {
-      await auth.use('api').invalidateToken()
       return response.status(200).json({ success: true, message: 'Đăng xuất thành công' })
     } catch (error) {
       return response.status(401).json({ success: false, message: 'Unauthorized' })
