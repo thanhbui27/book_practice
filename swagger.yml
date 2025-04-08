@@ -1,0 +1,932 @@
+openapi: "3.0.0"
+info:
+  title: "book"
+  version: "1.0.0"
+  description: ""
+components:
+  responses:
+    Forbidden:
+      description: "Access token is missing or invalid"
+    Accepted:
+      description: "The request was accepted"
+    Created:
+      description: "The resource has been created"
+    NotFound:
+      description: "The resource has been created"
+    NotAcceptable:
+      description: "The resource has been created"
+  securitySchemes:
+    BearerAuth:
+      type: "http"
+      scheme: "bearer"
+    BasicAuth:
+      type: "http"
+      scheme: "basic"
+    ApiKeyAuth:
+      type: "apiKey"
+      in: "header"
+      name: "X-API-Key"
+  schemas:
+    Any:
+      description: "Any JSON object not defined as schema"
+    PaginationMeta:
+      type: "object"
+      properties:
+        total:
+          type: "number"
+          example: 100
+          nullable: false
+        page:
+          type: "number"
+          example: 2
+          nullable: false
+        perPage:
+          type: "number"
+          example: 10
+          nullable: false
+        currentPage:
+          type: "number"
+          example: 3
+          nullable: false
+        lastPage:
+          type: "number"
+          example: 10
+          nullable: false
+        firstPage:
+          type: "number"
+          example: 1
+          nullable: false
+        lastPageUrl:
+          type: "string"
+          example: "/?page=10"
+          nullable: false
+        firstPageUrl:
+          type: "string"
+          example: "/?page=1"
+          nullable: false
+        nextPageUrl:
+          type: "string"
+          example: "/?page=6"
+          nullable: false
+        previousPageUrl:
+          type: "string"
+          example: "/?page=5"
+          nullable: false
+    Book:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 83
+        user_id:
+          type: "number"
+          example: 872
+        title:
+          type: "string"
+          example: "Lorem Ipsum"
+        year_of_publicaion:
+          type: "string"
+          example: "Lorem Ipsum"
+        abridge:
+          type: "string"
+          example: "Lorem Ipsum"
+        price:
+          type: "number"
+          example: 10.5
+        user:
+          $ref: "#/components/schemas/User"
+          example: null
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Book (Model)"
+    User:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 466
+        full_name:
+          type: "string"
+          example: "John Doe"
+        email:
+          type: "string"
+          example: "johndoe@example.com"
+          format: "email"
+        books:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Book"
+            example: null
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "User (Model)"
+    createBookValidator:
+      type: "object"
+      properties:
+        title:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 5
+        userId:
+          type: "number"
+          example: 412
+          required: true
+        year_of_publicaion:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        price:
+          type: "number"
+          example: 524
+          required: true
+        abridge:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          maxLength: 255
+      example:
+        title: "Lorem Ipsum"
+        userId: 412
+        year_of_publicaion: "Lorem Ipsum"
+        price: 524
+        abridge: "Lorem Ipsum"
+      description: "createBookValidator (Validator)"
+    validIdBook:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+          example: 76
+          required: true
+      example:
+        id: 76
+      description: "validIdBook (Validator)"
+    loginValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 6
+          maxLength: 20
+      example:
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "loginValidator (Validator)"
+    registerValidator:
+      type: "object"
+      properties:
+        fullName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 3
+          maxLength: 20
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 6
+          maxLength: 20
+      example:
+        fullName: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+      description: "registerValidator (Validator)"
+paths:
+  /auth/login:
+    post:
+      summary: " (login)"
+      description: "Đăng nhập\n\n _app/controllers/auth_controller.ts_ - **login**"
+      parameters: []
+      tags:
+        - "@TAGS AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: true
+                  data:
+                    type: "object"
+                    properties:
+                      access_token: "string"
+                  message: "Đăng nhập thành công"
+              example:
+                success: true
+                data:
+                  access_token: "string"
+                message: "Đăng nhập thành công"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email: "string"
+                password: "string"
+            example:
+              email: "string"
+              password: "string"
+  /auth/register:
+    post:
+      summary: " (register)"
+      description: "Returns **201** (Created) as **application/json**\n\n _app/controllers/auth_controller.ts_ - **register**"
+      parameters: []
+      tags:
+        - "@TAGS AUTH"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: true
+                  data:
+                    $ref: "#/components/schemas/User"
+                  message: "Đăng ký thành công"
+              example:
+                success: true
+                data:
+                  id: 466
+                  full_name: "John Doe"
+                  email: "johndoe@example.com"
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+                message: "Đăng ký thành công"
+          description: "Returns **201** (Created) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Email đã tồn tại"
+              example:
+                success: false
+                message: "Email đã tồn tại"
+          description: "Returns **400** (Bad Request) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                fullName: "string"
+                email: "string"
+                password: "string"
+            example:
+              fullName: "string"
+              email: "string"
+              password: "string"
+  /user:
+    get:
+      summary: "Get a list of @tags user (index)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/users_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "@TAGS USER"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: "true"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/User"
+                  message: "Lấy tất cả User thành công"
+              example:
+                success: "true"
+                data:
+                  - id: 466
+                    full_name: "John Doe"
+                    email: "johndoe@example.com"
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
+                message: "Lấy tất cả User thành công"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Forbidden"
+              example:
+                success: false
+                message: "Forbidden"
+          description: "Returns **403** (Forbidden) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Invalid"
+              example:
+                success: false
+                message: "Invalid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+  /auth/logout:
+    post:
+      summary: " (logout)"
+      description: "logout\n\n _app/controllers/auth_controller.ts_ - **logout**"
+      parameters: []
+      tags:
+        - "@TAGS AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: true
+                  message: "Đăng xuất thành công"
+              example:
+                success: true
+                message: "Đăng xuất thành công"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /book:
+    get:
+      summary: "Get a list of @tags books (index)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/books_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "@TAGS BOOKS"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: "true"
+                  data:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Book"
+                  message: "Lấy tất cả sách thành công"
+              example:
+                success: "true"
+                data:
+                  - id: 83
+                    user_id: 872
+                    title: "Lorem Ipsum"
+                    year_of_publicaion: "Lorem Ipsum"
+                    abridge: "Lorem Ipsum"
+                    price: 10.5
+                    created_at: "2021-03-23T16:13:08.489+01:00"
+                    updated_at: "2021-03-23T16:13:08.489+01:00"
+                message: "Lấy tất cả sách thành công"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Forbidden"
+              example:
+                success: false
+                message: "Forbidden"
+          description: "Returns **403** (Forbidden) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Invalid"
+              example:
+                success: false
+                message: "Invalid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+    post:
+      summary: "Create @tags books (store)"
+      description: "Returns **201** (Created) as **application/json**\n\n _app/controllers/books_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "@TAGS BOOKS"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: "true"
+                  data:
+                    $ref: "#/components/schemas/Book"
+                  message: "Tạo sách thành công"
+              example:
+                success: "true"
+                data:
+                  id: 83
+                  user_id: 872
+                  title: "Lorem Ipsum"
+                  year_of_publicaion: "Lorem Ipsum"
+                  abridge: "Lorem Ipsum"
+                  price: 10.5
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+                message: "Tạo sách thành công"
+          description: "Returns **201** (Created) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Có lỗi xảy ra"
+              example:
+                success: false
+                message: "Có lỗi xảy ra"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Forbidden"
+              example:
+                success: false
+                message: "Forbidden"
+          description: "Returns **403** (Forbidden) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "User not found"
+              example:
+                success: false
+                message: "User not found"
+          description: "Returns **404** (Not Found) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Invalid"
+              example:
+                success: false
+                message: "Invalid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                title: "Lorem Ipsum"
+                userId: 1
+                year_of_publicaion: "Lorem Ipsum"
+                abridge: "Lorem Ipsum"
+                price: 10
+            example:
+              title: "Lorem Ipsum"
+              userId: 1
+              year_of_publicaion: "Lorem Ipsum"
+              abridge: "Lorem Ipsum"
+              price: 10
+  /book/{id}:
+    get:
+      summary: "Get a single instance of @tags books (show)"
+      description: "lấy book theo id\n\n _app/controllers/books_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "@TAGS BOOKS"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: "true"
+                  data:
+                    $ref: "#/components/schemas/Book"
+                  message: "Lấy sách thành công"
+              example:
+                success: "true"
+                data:
+                  id: 83
+                  user_id: 872
+                  title: "Lorem Ipsum"
+                  year_of_publicaion: "Lorem Ipsum"
+                  abridge: "Lorem Ipsum"
+                  price: 10.5
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+                message: "Lấy sách thành công"
+          description: "Returns **201** (Created) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Có lỗi xảy ra"
+              example:
+                success: false
+                message: "Có lỗi xảy ra"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Forbidden"
+              example:
+                success: false
+                message: "Forbidden"
+          description: "Returns **403** (Forbidden) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Book k ton tai"
+              example:
+                success: false
+                message: "Book k ton tai"
+          description: "Returns **404** (Not Found) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Invalid"
+              example:
+                success: false
+                message: "Invalid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+    put:
+      summary: "Update @tags books (update)"
+      description: "update book theo id\n\n _app/controllers/books_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "@TAGS BOOKS"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: "true"
+                  data:
+                    $ref: "#/components/schemas/Book"
+                  message: "Lấy sách thành công"
+              example:
+                success: "true"
+                data:
+                  id: 83
+                  user_id: 872
+                  title: "Lorem Ipsum"
+                  year_of_publicaion: "Lorem Ipsum"
+                  abridge: "Lorem Ipsum"
+                  price: 10.5
+                  created_at: "2021-03-23T16:13:08.489+01:00"
+                  updated_at: "2021-03-23T16:13:08.489+01:00"
+                message: "Lấy sách thành công"
+          description: "Returns **201** (Created) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Có lỗi xảy ra"
+              example:
+                success: false
+                message: "Có lỗi xảy ra"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Forbidden"
+              example:
+                success: false
+                message: "Forbidden"
+          description: "Returns **403** (Forbidden) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Book k ton tai"
+              example:
+                success: false
+                message: "Book k ton tai"
+          description: "Returns **404** (Not Found) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Invalid"
+              example:
+                success: false
+                message: "Invalid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                title: "Lorem Ipsum"
+                userId: 1
+                year_of_publicaion: "Lorem Ipsum"
+                abridge: "Lorem Ipsum"
+                price: 10
+            example:
+              title: "Lorem Ipsum"
+              userId: 1
+              year_of_publicaion: "Lorem Ipsum"
+              abridge: "Lorem Ipsum"
+              price: 10
+    delete:
+      summary: "Delete @tags books (destroy)"
+      description: "delete book theo id\n\n _app/controllers/books_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "@TAGS BOOKS"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: true
+                  message: "Xóa sách thành công"
+              example:
+                success: true
+                message: "Xóa sách thành công"
+          description: "Returns **201** (Created) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Có lỗi xảy ra"
+              example:
+                success: false
+                message: "Có lỗi xảy ra"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Unauthorized"
+              example:
+                success: false
+                message: "Unauthorized"
+          description: "Returns **401** (Unauthorized) as **application/json**"
+        403:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Forbidden"
+              example:
+                success: false
+                message: "Forbidden"
+          description: "Returns **403** (Forbidden) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Book k ton tai"
+              example:
+                success: false
+                message: "Book k ton tai"
+          description: "Returns **404** (Not Found) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success: false
+                  message: "Invalid"
+              example:
+                success: false
+                message: "Invalid"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+tags:
+  - name: "@TAGS AUTH"
+    description: "Everything related to @TAGS AUTH"
+  - name: "@TAGS AUTH"
+    description: "Everything related to @TAGS AUTH"
+  - name: "@TAGS USER"
+    description: "Everything related to @TAGS USER"
+  - name: "@TAGS AUTH"
+    description: "Everything related to @TAGS AUTH"
+  - name: "@TAGS BOOKS"
+    description: "Everything related to @TAGS BOOKS"
+  - name: "@TAGS BOOKS"
+    description: "Everything related to @TAGS BOOKS"
+  - name: "@TAGS BOOKS"
+    description: "Everything related to @TAGS BOOKS"
+  - name: "@TAGS BOOKS"
+    description: "Everything related to @TAGS BOOKS"
+  - name: "@TAGS BOOKS"
+    description: "Everything related to @TAGS BOOKS"
