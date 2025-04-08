@@ -39,7 +39,7 @@ class AuthController {
    * @responseBody 200 - {"success": true, "message": "Đăng xuất thành công"}
    * @responseBody 401 - {"success": false, "message": "Unauthorized"}
    */
-  public async logout({ auth, response }: HttpContext) {
+  public async logout({ response }: HttpContext) {
     try {
       return response.status(200).json({ success: true, message: 'Đăng xuất thành công' })
     } catch (error) {
