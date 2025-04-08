@@ -27,4 +27,4 @@ router
 
     router.resource('book', BooksController).only(['index', 'store', 'update', 'destroy', 'show'])
   })
-  .use(middleware.auth({ guards: ['api'] }))
+  .use(middleware.auth({ guards: ['jwt'] }))
